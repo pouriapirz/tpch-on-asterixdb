@@ -1,7 +1,6 @@
-drop dataverse tpch_XXX if exists;
-create dataverse tpch_XXX;
-
-use dataverse tpch_XXX;
+drop dataverse tpch if exists;
+create dataverse tpch;
+use dataverse tpch;
 
 create type LineItemType as {
   l_orderkey: int64,
@@ -97,7 +96,6 @@ create dataset Supplier(SupplierType) primary key s_suppkey;
 create dataset Region(RegionType)     primary key r_regionkey;
 create dataset Nation(NationType)     primary key n_nationkey;
 
-
 create index nation_fk_region on Nation(n_regionkey);
 create index supplier_fk_nation on Supplier (s_nationkey);
 create index partsupp_fk_part on Partsupp (ps_partkey);
@@ -107,8 +105,6 @@ create index orders_fk_customer on Orders (o_custkey);
 create index lineitem_fk_orders on LineItem (l_orderkey);
 create index lineitem_fk_part on LineItem (l_partkey);
 create index lineitem_fk_supplier on LineItem (l_suppkey);
-
 create index orders_orderdateIx on Orders (o_orderdate);
 create index lineitem_shipdateIx on LineItem (l_shipdate);
 create index lineitem_receiptdateIx on LineItem (l_receiptdate);
-
