@@ -1,0 +1,9 @@
+use tpch;
+select element 100.0 *
+     sum("switch-case"(like(p.p_type,'PROMO%'),true,(l.l_extendedprice * (1 - l.l_discount)),false,0.0))
+     / sum(l.l_extendedprice * (1 - l.l_discount))
+FROM  LineItem l,
+      Part p
+WHERE l.l_partkey = p.p_partkey AND l.l_shipdate >= '1995-09-01' AND l.l_shipdate < '1995-10-01'
+GROUP BY 1 AS t
+;
