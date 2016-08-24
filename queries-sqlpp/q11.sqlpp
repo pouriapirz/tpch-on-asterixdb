@@ -1,31 +1,28 @@
-use tpch;
-WITH sum as (
-      SELECT ELEMENT SUM(ps.ps_supplycost * ps.ps_availqty)
+USE tpch;
+
+WITH sum AS (
+      SELECT VALUE SUM(ps.ps_supplycost * ps.ps_availqty)
       FROM  Partsupp AS ps,
             (
-                SELECT s.s_suppkey s_suppkey
+                SELECT s.s_suppkey
                 FROM  Supplier as s,
                       Nation as n
-                WHERE ((s.s_nationkey = n.n_nationkey) and (n.n_name = 'GERMANY'))
+                WHERE s.s_nationkey = n.n_nationkey AND n.n_name = 'GERMANY'
             ) AS sn
       WHERE ps.ps_suppkey = sn.s_suppkey
 )[0]
 
-SELECT t1.ps_partkey AS partkey,
-       t1.part_value AS part_value
-FROM  (
-        SELECT ps_partkey AS ps_partkey,
-               tpch.sum(ps.ps_supplycost * ps.ps_availqty) AS part_value
-        FROM  Partsupp ps,
-          (
-        SELECT s.s_suppkey s_suppkey
+
+SELECT ps_partkey, SUM(ps.ps_supplycost * ps.ps_availqty) AS part_value
+FROM Partsupp ps,
+     (
+        SELECT s.s_suppkey
         FROM  Supplier AS s,
               Nation as n
-        WHERE ((s.s_nationkey = n.n_nationkey) and (n.n_name = 'GERMANY'))
+        WHERE s.s_nationkey = n.n_nationkey and n.n_name = 'GERMANY'
     ) sn
-    WHERE ps.ps_suppkey = sn.s_suppkey
-    GROUP BY ps.ps_partkey AS ps_partkey
-) t1
-WHERE t1.part_value > (sum * 0.0001000 )
-ORDER BY t1.part_value DESC
+WHERE ps.ps_suppkey = sn.s_suppkey
+GROUP BY ps.ps_partkey
+HAVING part_value > sum * 0.0001000
+ORDER BY part_value DESC
 ;
