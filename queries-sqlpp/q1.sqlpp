@@ -1,6 +1,7 @@
-use tpch;
-SELECT  l_returnflag AS l_returnflag,
-        l_linestatus AS l_linestatus,
+USE tpch;
+
+SELECT  l.l_returnflag,
+        l.l_linestatus,
         sum(l.l_quantity) AS sum_qty,
         sum(l.l_extendedprice) AS sum_base_price,
         sum(l.l_extendedprice * (1 - l.l_discount)) AS sum_disc_price,
@@ -12,6 +13,6 @@ SELECT  l_returnflag AS l_returnflag,
 FROM  LineItem AS l
 WHERE l.l_shipdate /*+ skip-index */ <= '1998-09-02'
 /* +hash */
-GROUP BY l.l_returnflag AS l_returnflag, l.l_linestatus AS l_linestatus
-ORDER BY l_returnflag, l_linestatus
+GROUP BY l.l_returnflag, l.l_linestatus
+ORDER BY l.l_returnflag, l.l_linestatus
 ;
