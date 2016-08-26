@@ -1,16 +1,36 @@
-use tpch;
-set "import-private-functions" "true";
+USE tpch;
 
-declare function q19_tmp() {
-(
-    select element {'lpkey':t.l_partkey,'quantity':t.l_quantity,'extndprice':t.l_extendedprice,'discount':t.l_discount}
-    from  LineItem as t
-    where (((t.l_shipmode = 'AIR') or (t.l_shipmode = 'AIR REG')) and (t.l_shipinstruct = 'DELIVER IN PERSON'))
-)
-};
-select element  coll_sum((
-    select element (l.extndprice * (1 - l.discount))
-    from   q19_tmp() as l,
-          Part as p
-    where ((p.p_partkey = l.lpkey) and (((p.p_brand = 'Brand#12') and  "reg-exp"(p.p_container,'SM CASE|SM BOX|SM PACK|SM PKG') and (l.quantity >= 1) and (l.quantity <= 11) and (p.p_size >= 1) and (p.p_size <= 5)) or ((p.p_brand = 'Brand#23') and  "reg-exp"(p.p_container,'MED BAG|MED BOX|MED PKG|MED PACK') and (l.quantity >= 10) and (l.quantity <= 20) and (p.p_size >= 1) and (p.p_size <= 10)) or ((p.p_brand = 'Brand#34') and  "reg-exp"(p.p_container,'LG CASE|LG BOX|LG PACK|LG PKG') and (l.quantity >= 20) and (l.quantity <= 30) and (p.p_size >= 1) and (p.p_size <= 15))))
-));
+set `import-private-functions` `true`;
+
+SELECT ELEMENT SUM(l.l_extendedprice * (1 - l.l_discount))
+FROM LineItem l
+JOIN Part p
+ON p.p_partkey = l.l_partkey
+  WHERE
+  (
+    p.p_brand = 'Brand#12'
+    AND regexp_contains(p.p_container, 'SM CASE||SM BOX||SM PACK||SM PKG')
+    AND l.l_quantity >= 1 and l.l_quantity <= 11
+    AND p.p_size >= 1 and p.p_size <= 5
+    AND regexp_contains(l.l_shipmode, 'AIR||AIR REG')
+    AND l.l_shipinstruct = 'DELIVER IN PERSON'
+  )
+  OR
+  (
+    p.p_brand = 'Brand#23'
+    AND regexp_contains(p.p_container, 'MED BAG||MED BOX||MED PKG||MED PACK')
+    AND l.l_quantity >= 10 and l.l_quantity <= 20
+    AND p.p_size >= 1 and p.p_size <= 10
+    AND regexp_contains(l.l_shipmode, 'AIR||AIR REG')
+    AND l.l_shipinstruct = 'DELIVER IN PERSON'
+  )
+  OR
+  (
+    p.p_brand = 'Brand#34'
+    AND regexp_contains(p.p_container, 'LG CASE||LG BOX||LG PACK||LG PKG')
+    AND l.l_quantity >= 20 and l.l_quantity <= 30
+    AND p.p_size >= 1 and p.p_size <= 15
+    AND regexp_contains(l.l_shipmode, 'AIR||AIR REG')
+    AND l.l_shipinstruct = 'DELIVER IN PERSON'
+  )
+;
