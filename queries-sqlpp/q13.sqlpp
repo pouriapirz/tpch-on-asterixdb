@@ -1,20 +1,21 @@
-use tpch;
-SELECT c_count AS c_count, count(gco) AS custdist
+USE tpch;
+
+SELECT c_count, count(gco) AS custdist
 FROM  (
-        SELECT c_custkey AS c_custkey, sum(co.o_orderkey_count) AS c_count
+        SELECT c_custkey, sum(o_orderkey_count) AS c_count
         FROM  (
-                SELECT c.c_custkey AS c_custkey,
+                SELECT c.c_custkey,
                        coll_count(
                            (
                             select element o.o_orderkey
-                            from  Orders as o
-                            where c.c_custkey = o.o_custkey and not(like(o.o_comment,'%special%requests%'))
+                            from  Orders o
+                            where c.c_custkey = o.o_custkey and o.o_comment NOT LIKE '%special%requests%'
                            )
                          ) AS o_orderkey_count
                 from  Customer c
         ) co
-        GROUP BY co.c_custkey c_custkey
+        GROUP BY c_custkey
 ) gco
-GROUP BY gco.c_count as c_count
-ORDER BY custdist desc,c_count DESC
+GROUP BY c_count
+ORDER BY custdist DESC,c_count DESC
 ;
