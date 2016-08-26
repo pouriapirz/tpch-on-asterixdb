@@ -1,7 +1,5 @@
 USE tpch;
 
-set `import-private-functions` `true`;
-
 SELECT ELEMENT SUM(l.l_extendedprice * (1 - l.l_discount))
 FROM LineItem l
 JOIN Part p
