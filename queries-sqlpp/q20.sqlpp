@@ -18,7 +18,7 @@ from  (
               (
             select element {'p_partkey':p.p_partkey}
             from  Part as p
-            where  like(p.p_name,'forest%')
+            where  p.p_name LIKE 'forest%'
         ) as t1
         where (ps.ps_partkey = t1.p_partkey)
     ) as pst1

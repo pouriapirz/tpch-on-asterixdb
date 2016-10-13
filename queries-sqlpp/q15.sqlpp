@@ -9,7 +9,7 @@ WITH revenue AS (
 ),
 m AS (
       SELECT ELEMENT max(r2.total_revenue)
-      FROM revenue() r2
+      FROM revenue r2
 )[0]
 
 SELECT s.s_suppkey s_suppkey,
