@@ -1,18 +1,17 @@
-use tpch;
-declare function tmp() {
+USE tpch;
+
+
+WITH tmp AS
 (
-    select element {'t_partkey':l_partkey,'t_avg_quantity':(0.2 *  coll_avg((
-              select element i.l_quantity
-              from  l as i
-          )))}
-    from  LineItem as l
-    group by l.l_partkey as l_partkey
+    SELECT l_partkey t_partkey, 0.2 * avg(l_quantity) t_avg_quantity
+    FROM LineItem
+    GROUP BY l_partkey
 )
-};
-select element ( coll_sum((
-      select element l.l_extendedprice
-      from  LineItem as l,
-            Part as p,
-             tmp() as t
-      where (((p.p_partkey = l.l_partkey) and (p.p_brand = 'Brand#23') and (p.p_container = 'MED BOX')) and ((l.l_partkey = t.t_partkey) and (l.l_quantity < t.t_avg_quantity)))
-  )) / 7.0);
+
+SELECT ELEMENT SUM(l_extendedprice) / 7.0
+FROM  tmp t,
+      LineItem l,
+      Part p
+WHERE p.p_partkey = l.l_partkey AND p.p_container = 'MED BOX'
+            AND l.l_partkey = t.t_partkey AND l.l_quantity < t.t_avg_quantity
+;
