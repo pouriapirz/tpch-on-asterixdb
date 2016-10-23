@@ -17,12 +17,12 @@ q20_tmp2 AS
 ,
 q20_tmp3 AS
 (
-  SELECT ps_suppkey, ps_availqty, sum_quantity
+  SELECT ps_suppkey, ps_availqty, t2.sum_quantity
   FROM Partsupp
-  JOIN q20_tmp1
-  ON ps_partkey = p_partkey
-  JOIN q20_tmp2
-  ON ps_partkey = l_partkey and ps_suppkey = l_suppkey
+  JOIN q20_tmp1 t1
+  ON ps_partkey = t1.p_partkey
+  JOIN q20_tmp2 t2
+  ON ps_partkey = t2.l_partkey and ps_suppkey = t2.l_suppkey
 )
 ,
 q20_tmp4 AS
@@ -33,11 +33,11 @@ q20_tmp4 AS
   GROUP BY ps_suppkey
 )
 
-SELECT s_name, s_address
+SELECT s.s_name, s.s_address
 FROM Supplier s
 JOIN Nation n
-ON s_nationkey = n_nationkey
-JOIN q20_tmp4
-ON s_suppkey = ps_suppkey
+ON s.s_nationkey = n.n_nationkey
+JOIN q20_tmp4 t4
+ON s.s_suppkey = t4.ps_suppkey
 WHERE n.n_name = 'CANADA'
-ORDER BY s_name;
+ORDER BY s.s_name;
