@@ -9,7 +9,7 @@ WITH q7_volume_shipping_tmp AS
            n2.n_nationkey AS c_nationkey
     from  Nation as n1,
           Nation as n2
-    where n2.n_name = 'GERMANY' or n1.n_name = 'GERMANY'
+    where (n1.n_name='FRANCE' and n2.n_name='GERMANY') or (n1.n_name='GERMANY' and n2.n_name='FRANCE')
 )
 
 SELECT supp_nation, cust_nation, l_year, sum(volume) AS revenue

@@ -22,6 +22,7 @@ FROM
                 (   SELECT n.n_name AS n_name, n.n_nationkey AS n_nationkey
                     FROM Nation n JOIN Region r
                     ON n.n_regionkey = r.r_regionkey
+		    AND r.r_name = 'ASIA'
                 ) n1 ON s.s_nationkey = n1.n_nationkey
             ) s1
         ON l.l_suppkey = s1.s_suppkey
