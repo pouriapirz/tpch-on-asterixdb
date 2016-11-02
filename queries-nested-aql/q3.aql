@@ -7,7 +7,7 @@ where
 for $l in $o.o_lineitems
 where
   $o.o_orderdate /*+ skip-index */ < '1995-03-15' and $l.l_shipdate /*+ skip-index */ > '1995-03-15'
-/*+ hash*/
+// /*+ hash*/
 group by $l_orderkey := $o.o_orderkey, $o_orderdate := $o.o_orderdate, $o_shippriority := $o.o_shippriority
   with $l
 let $revenue := sum (
